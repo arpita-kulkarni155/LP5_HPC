@@ -1,0 +1,117 @@
+#include <iostream>
+#include <omp.h>
+#include <vector>
+#include <climits>
+#include <cstdlib>
+
+using namespace std;
+
+void minimum(const vector<int>& array) {
+    int min_val = INT_MAX;
+    double start = omp_get_wtime();
+    for (int i = 0; i < array.size(); i++) {
+        if (array[i] < min_val) {
+            min_val = array[i];
+        }
+    }
+    double end = omp_get_wtime();
+    cout << "Minimum Element (Sequential): " << min_val << endl;
+    cout << "Time Taken: " << (end - start) << " seconds\n";
+
+    int min_ele = INT_MAX;
+    start = omp_get_wtime();
+    #pragma omp parallel for reduction(min: min_ele)
+    for (int i = 0; i < array.size(); i++) {
+        if (array[i] < min_ele) {
+            min_ele = array[i];
+        }
+    }
+    end = omp_get_wtime();
+    cout << "Minimum Element (Parallel Reduction): " << min_ele << endl;
+    cout << "Time Taken: " << (end - start) << " seconds\n\n";
+}
+
+void maximum(const vector<int>& array) {
+    int max_val = INT_MIN;
+    double start = omp_get_wtime();
+    for (int i = 0; i < array.size(); i++) {
+        if (array[i] > max_val) {
+            max_val = array[i];
+        }
+    }
+    double end = omp_get_wtime();
+    cout << "Maximum Element (Sequential): " << max_val << endl;
+    cout << "Time Taken: " << (end - start) << " seconds\n";
+
+    int max_ele = INT_MIN;
+    start = omp_get_wtime();
+    #pragma omp parallel for reduction(max: max_ele)
+    for (int i = 0; i < array.size(); i++) {
+        if (array[i] > max_ele) {
+            max_ele = array[i];
+        }
+    }
+    end = omp_get_wtime();
+    cout << "Maximum Element (Parallel Reduction): " << max_ele << endl;
+    cout << "Time Taken: " << (end - start) << " seconds\n\n";
+}
+
+void sum(const vector<int>& array) {
+    int total = 0;
+    double start = omp_get_wtime();
+    for (int i = 0; i < array.size(); i++) {
+        total += array[i];
+    }
+    double end = omp_get_wtime();
+    cout << "Summation (Sequential): " << total << endl;
+    cout << "Time Taken: " << (end - start) << " seconds\n";
+
+    total = 0;
+    start = omp_get_wtime();
+    #pragma omp parallel for reduction(+: total)
+    for (int i = 0; i < array.size(); i++) {
+        total += array[i];
+    }
+    end = omp_get_wtime();
+    cout << "Summation (Parallel Reduction): " << total << endl;
+    cout << "Time Taken: " << (end - start) << " seconds\n\n";
+}
+
+void average(const vector<int>& array) {
+    double total = 0.0;
+    double start = omp_get_wtime();
+    for (int i = 0; i < array.size(); i++) {
+        total += array[i];
+    }
+    double end = omp_get_wtime();
+    cout << "Average (Sequential): " << total / array.size() << endl;
+    cout << "Time Taken: " << (end - start) << " seconds\n";
+
+    total = 0.0;
+    start = omp_get_wtime();
+    #pragma omp parallel for reduction(+: total)
+    for (int i = 0; i < array.size(); i++) {
+        total += array[i];
+    }
+    end = omp_get_wtime();
+    cout << "Average (Parallel Reduction): " << total / array.size() << endl;
+    cout << "Time Taken: " << (end - start) << " seconds\n\n";
+}
+
+int main() {
+    cout << "Enter number of elements in array: ";
+    int N;
+    cin >> N;
+
+    vector<int> array(N);
+    for (int i = 0; i < N; i++) {
+        array[i] = rand() % 1000;
+    }
+
+    minimum(array);
+    maximum(array);
+    sum(array);
+    average(array);
+
+    return 0;
+}
