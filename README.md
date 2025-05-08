@@ -1,7 +1,7 @@
 # LP5_HPC
 
 openmp:
-\n gedit reduction.cpp
+## gedit reduction.cpp
 g++ reduction.cpp -o reduction -fopenmp
 ./reduction
 
